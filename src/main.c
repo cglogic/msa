@@ -6,20 +6,11 @@
 #include <stdbool.h>
 
 #include "config.h"
+#include "network.h"
 
-struct url
-{
-	// Protocol
-	// Address
-	// Port
-};
+struct url_t url;
 
-bool parse_url(const char *url)
-{
-	return false;
-}
-
-void options_parse(int argc, char** argv)
+void options_parse(int argc, char ** argv)
 {
 	int ch = 0;
 	const char *opt_short = "hv";
@@ -51,7 +42,7 @@ void options_parse(int argc, char** argv)
 
 		default:
 			//syslog(LOG_ERR, "invalid option -- %c", ch);
-			syslog(LOG_ERR, "Try `%s --help' for more information.", argv[0]);
+			printf("Try `%s --help' for more information.", argv[0]);
 			exit(0);
 		}
 	}
@@ -60,20 +51,21 @@ void options_parse(int argc, char** argv)
 	{
 		printf("Check this URL: %s\n", argv[index]);
 
-		if (parse_url(argv[index]))
+		if (url_parse(argv[index], &url))
 			break;
 	}
 }
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
-	openlog(strrchr(argv[0], '/') != NULL ? strrchr(argv[0], '/') + 1 : argv[0], LOG_CONS | LOG_PERROR, LOG_DAEMON);
+	//openlog(strrchr(argv[0], '/') != NULL ? strrchr(argv[0], '/') + 1 : argv[0], LOG_CONS | LOG_PERROR, LOG_DAEMON);
 
 	options_parse(argc, argv);
 
 	// Start work
+	url_open(&url);
 
-	closelog();
+	//closelog();
 
 	return EXIT_SUCCESS;
 }
