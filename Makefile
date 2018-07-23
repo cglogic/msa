@@ -33,3 +33,6 @@ install: msa
 	mkdir -p $(DESTDIR)$(BINDIR)
 	cp $(TARGET) $(DESTDIR)$(BINDIR)/
 	chmod 755 ${DESTDIR}${BINDIR}/$(TARGET)
+
+run:
+	./$(TARGET)
