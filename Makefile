@@ -15,7 +15,7 @@ INSTALL_PROGRAM=$(INSTALL)
 INSTALL_DATA=${INSTALL} -m 644
 
 LIBS=-lpthread -lncurses
-OBJECTS=src/main.o src/network.o
+OBJECTS=src/main.o src/network.o src/stream.o
 
 all: $(TARGET)
 

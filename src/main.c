@@ -1,10 +1,7 @@
 #include <syslog.h>
 #include <getopt.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdbool.h>
 
+#include "common.h"
 #include "config.h"
 #include "network.h"
 

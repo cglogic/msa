@@ -1,8 +1,9 @@
 #include "network.h"
+#include "stream.h"
 
 #define BUFLEN 2048
 
-bool url_parse(const char *addr, struct url_t *url)
+bool url_parse(/*const char *addr, struct url_t *url*/)
 {
 	//url = malloc(sizeof(struct url_t));
 	//url->network = PF_INET;
@@ -23,7 +24,7 @@ bool url_open(struct url_t *url)
 
 	memset(&url->a, 0, sizeof(url->a));
 	url->a.sin_family = AF_INET;
-	url->a.sin_port = htons(11111);
+	url->a.sin_port = htons(44444);
 	url->a.sin_addr.s_addr = htonl(INADDR_ANY);
 
 	if ((bind(url->s, &url->a, sizeof(url->a))) < 0)
@@ -33,7 +34,7 @@ bool url_open(struct url_t *url)
 	}
 
 	struct ip_mreq mreq;
-	mreq.imr_multiaddr.s_addr = inet_addr("225.0.0.1");
+	mreq.imr_multiaddr.s_addr = inet_addr("225.0.0.4");
 	mreq.imr_interface.s_addr = htonl(INADDR_ANY);//inet_addr("10.118.1.99");
 
 	if (setsockopt(url->s, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq)) < 0)
@@ -47,6 +48,8 @@ bool url_open(struct url_t *url)
 
 bool url_receive(struct url_t *url)
 {
+	ts_init();
+
 	struct sockaddr_in ra;
 	char rb[BUFLEN];
 	int rl = sizeof(ra);
@@ -60,9 +63,15 @@ bool url_receive(struct url_t *url)
 			perror("recvfrom");
 			exit(1);
 		}
+#if defined DEBUG
+		printf("Received packet %i from %s:%d\nSize: %zi\n", ++pn, inet_ntoa(ra.sin_addr), ntohs(ra.sin_port), rs);
+#endif
+		// if (ra.sin_addr != prev.addr) error("Only one source must be!");
 
-		printf("Received packet %i from %s:%d\nSize: %i\n\n", ++pn, inet_ntoa(ra.sin_addr), ntohs(ra.sin_port), rs);
+		tr_analize(rb, rs);
 	}
+
+	ts_destroy();
 
 	return true;
 }
